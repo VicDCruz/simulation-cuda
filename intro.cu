@@ -74,8 +74,8 @@ int main(int argc, char *argv[])
      * Revisado por Victor
      * TODO: Revisar si los input son los correctos
      */
-    cudaMemcpy(d_a, a, ARR_BYTES, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_b, b, ARR_BYTES, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_a, a, sz, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_b, b, sz, cudaMemcpyHostToDevice);
 
     /* run the kernel on the GPU */
     /* Parte 2A: Configurar y llamar los kernels */
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
      * Revisado por Victor
      * TODO: Revisar si los output son los correctos
      */
-    cudaMemcpy(c, d_c, ARR_BYTES, cudaMemcpyDeviceToHost);
+    cudaMemcpy(c, d_c, sz, cudaMemcpyDeviceToHost);
 
     checkCUDAError("memcpy");
 
