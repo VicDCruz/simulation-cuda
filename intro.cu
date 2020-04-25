@@ -92,12 +92,12 @@ int main(int argc, char *argv[])
      * Parte 2A: Configurar y llamar los kernels
      * Revisado por Victor
      */
-    // dim3 dimGrid(NUM_BLOCKS, ARRAY_SIZE);
-    // dim3 dimBlock(THREADS_PER_BLOCK);
-    // printf("\nSUMA en bloques\n");
-    // vect_add_multiblock<<<dimGrid, dimBlock>>>(d_a, d_b, d_c);
-    printf("\nSUMA simple\n");
-    vect_add<<<1, ARRAY_SIZE>>>(d_a, d_b, d_c);
+    dim3 dimGrid(NUM_BLOCKS, ARRAY_SIZE);
+    dim3 dimBlock(THREADS_PER_BLOCK);
+    printf("\nSUMA en bloques\n");
+    vect_add_multiblock<<<dimGrid, dimBlock>>>(d_a, d_b, d_c);
+    // printf("\nSUMA simple\n");
+    // vect_add<<<1, ARRAY_SIZE>>>(d_a, d_b, d_c);
 
     /* Esperar a que todos los threads acaben y checar por errores */
     cudaThreadSynchronize();
