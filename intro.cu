@@ -17,9 +17,16 @@
 void checkCUDAError(const char*);
 
 /* Kernel para sumar dos vectores en un sólo bloque de hilos */
-__global__ void vect_add(int *d_a)
+__global__ void vect_add(int *d_a, int *d_b, int *d_out)
 {
-    /* Part 2B: Implementación del kernel para realizar la suma de los vectores en el GPU */
+    /* 
+     * Part 2B: Implementación del kernel para realizar la suma de los vectores en el GPU
+     * Revisado por Victor
+     */
+    int idx = threadIdx.x + (blockIdx.x * blockDim.x);
+    int numA = d_a[idx];
+    int numB = d_b[idx];
+	d_out[idx] = numA + numB;
 }
 
 /* Versión de múltiples bloques de la suma de vectores */
@@ -78,10 +85,13 @@ int main(int argc, char *argv[])
     cudaMemcpy(d_b, b, sz, cudaMemcpyHostToDevice);
 
     /* run the kernel on the GPU */
-    /* Parte 2A: Configurar y llamar los kernels */
-    /* dim3 dimGrid( ); */
-    /* dim3 dimBlock( ); */
-    /* vect_add<<< , >>>( ); */
+    /*
+     * Parte 2A: Configurar y llamar los kernels
+     * Revisado por Victor
+     */
+    dim3 dimGrid(NUM_BLOCKS, 1);
+    dim3 dimBlock(THREADS_PER_BLOCK);
+    vect_add<<<dimGrid, dimBlock>>>(d_a, d_b, d_c);
 
     /* Esperar a que todos los threads acaben y checar por errores */
     cudaThreadSynchronize();
