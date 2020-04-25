@@ -23,7 +23,8 @@ __global__ void vect_add(int *d_a, int *d_b, int *d_out)
      * Part 2B: Implementación del kernel para realizar la suma de los vectores en el GPU
      * Revisado por Victor
      */
-    int idx = threadIdx.x + (blockIdx.x * blockDim.x);
+    printf("\nSUMA simple\n");
+    int idx = threadIdx.x;
     int numA = d_a[idx];
     int numB = d_b[idx];
 	d_out[idx] = numA + numB;
@@ -33,6 +34,11 @@ __global__ void vect_add(int *d_a, int *d_b, int *d_out)
 __global__ void vect_add_multiblock(int *d_a)
 {
     /* Part 2C: Implementación del kernel pero esta vez permitiendo múltiples bloques de hilos. */
+    printf("\nSUMA en bloques\n");
+    int idx = threadIdx.x + (blockIdx.x * blockDim.x);
+    int numA = d_a[idx];
+    int numB = d_b[idx];
+	d_out[idx] = numA + numB;
 }
 
 /* Numero de elementos en el vector */
@@ -88,9 +94,10 @@ int main(int argc, char *argv[])
      * Parte 2A: Configurar y llamar los kernels
      * Revisado por Victor
      */
-    dim3 dimGrid(NUM_BLOCKS, 1);
-    dim3 dimBlock(THREADS_PER_BLOCK);
-    vect_add<<<dimGrid, dimBlock>>>(d_a, d_b, d_c);
+    // dim3 dimGrid(NUM_BLOCKS, ARRAY_SIZE);
+    // dim3 dimBlock(THREADS_PER_BLOCK);
+    // vect_add_multiblock<<<dimGrid, dimBlock>>>(d_a, d_b, d_c);
+    vect_add<<<1, ARRAY_SIZE>>>(d_a, d_b, d_c);
 
     /* Esperar a que todos los threads acaben y checar por errores */
     cudaThreadSynchronize();
