@@ -79,7 +79,6 @@ int main(int argc, char *argv[])
     /* 
      * Parte 1B: Copiar los vectores del CPU al GPU
      * Revisado por Victor
-     * TODO: Revisar si los input son los correctos
      */
     cudaMemcpy(d_a, a, sz, cudaMemcpyHostToDevice);
     cudaMemcpy(d_b, b, sz, cudaMemcpyHostToDevice);
@@ -100,7 +99,6 @@ int main(int argc, char *argv[])
     /* 
      * Part 1C: copiar el resultado de nuevo al CPU
      * Revisado por Victor
-     * TODO: Revisar si los output son los correctos
      */
     cudaMemcpy(c, d_c, sz, cudaMemcpyDeviceToHost);
 
