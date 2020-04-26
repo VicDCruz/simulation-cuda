@@ -17,26 +17,19 @@
 void checkCUDAError(const char*);
 
 /* Kernel para sumar dos vectores en un sólo bloque de hilos */
-__global__ void vect_add(int *d_a, int *d_b, int *d_out)
+__global__ void vect_add(int *d_a, int *d_b, int *d_c)
 {
-    /* 
-     * Part 2B: Implementación del kernel para realizar la suma de los vectores en el GPU
-     * Revisado por Victor
-     */
+    /* Part 2B: Implementación del kernel para realizar la suma de los vectores en el GPU */
     int idx = threadIdx.x;
-    int numA = d_a[idx];
-    int numB = d_b[idx];
-	d_out[idx] = numA + numB;
+    d_c[idx] = d_a[idx] + d_b[idx];
 }
 
 /* Versión de múltiples bloques de la suma de vectores */
-__global__ void vect_add_multiblock(int *d_a, int *d_b, int *d_out)
+__global__ void vect_add_multiblock(int *d_a, int *d_b, int *d_c)
 {
     /* Part 2C: Implementación del kernel pero esta vez permitiendo múltiples bloques de hilos. */
     int idx = threadIdx.x + (blockIdx.x * blockDim.x);
-    int numA = d_a[idx];
-    int numB = d_b[idx];
-	d_out[idx] = numA + numB;
+    d_c[idx] = d_a[idx] + d_b[idx];
 }
 
 /* Numero de elementos en el vector */
@@ -46,7 +39,7 @@ __global__ void vect_add_multiblock(int *d_a, int *d_b, int *d_out)
  * Número de bloques e hilos
  * Su producto siempre debe ser el tamaño del vector (arreglo).
  */
-#define NUM_BLOCKS  1
+#define NUM_BLOCKS  4
 #define THREADS_PER_BLOCK 256
 
 /* Main routine */
@@ -67,7 +60,6 @@ int main(int argc, char *argv[])
 
     /*
      * Parte 1A:Reservar memoria en el GPU
-     * Revisado por Victor
      */
     cudaMalloc((void**) &d_a, sz);
     cudaMalloc((void**) &d_b, sz);
@@ -80,33 +72,22 @@ int main(int argc, char *argv[])
         c[i] = 0;
     }
 
-    /* 
-     * Parte 1B: Copiar los vectores del CPU al GPU
-     * Revisado por Victor
-     */
+    /* Parte 1B: Copiar los vectores del CPU al GPU */
     cudaMemcpy(d_a, a, sz, cudaMemcpyHostToDevice);
     cudaMemcpy(d_b, b, sz, cudaMemcpyHostToDevice);
 
     /* run the kernel on the GPU */
-    /*
-     * Parte 2A: Configurar y llamar los kernels
-     * Revisado por Victor
-     */
-    dim3 dimGrid(NUM_BLOCKS, ARRAY_SIZE);
-    dim3 dimBlock(THREADS_PER_BLOCK);
-    printf("\nSUMA en bloques\n");
+    /* Parte 2A: Configurar y llamar los kernels */
+    dim3 dimGrid(NUM_BLOCKS, 1, 1);
+    dim3 dimBlock(THREADS_PER_BLOCK / NUM_BLOCKS, 1, 1);
+    //vect_add<<<dimGrid, dimBlock>>>(d_a, d_b, d_c);
     vect_add_multiblock<<<dimGrid, dimBlock>>>(d_a, d_b, d_c);
-    // printf("\nSUMA simple\n");
-    // vect_add<<<1, ARRAY_SIZE>>>(d_a, d_b, d_c);
 
     /* Esperar a que todos los threads acaben y checar por errores */
     cudaThreadSynchronize();
     checkCUDAError("kernel invocation");
 
-    /* 
-     * Part 1C: copiar el resultado de nuevo al CPU
-     * Revisado por Victor
-     */
+    /* Part 1C: copiar el resultado de nuevo al CPU */
     cudaMemcpy(c, d_c, sz, cudaMemcpyDeviceToHost);
 
     checkCUDAError("memcpy");
@@ -118,10 +99,7 @@ int main(int argc, char *argv[])
     }
     printf("\n\n");
 
-    /* 
-     * Parte 1D: Liberar los arreglos
-     * Revisado por Victor
-     */
+    /* Parte 1D: Liberar los arreglos */
     cudaFree(d_a);
     cudaFree(d_b);
     cudaFree(d_c);
