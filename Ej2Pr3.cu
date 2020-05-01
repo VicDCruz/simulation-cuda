@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-//PP#include <cuda.h>
+//PP #include <cuda.h>
 
 #define STRIDE       32
 #define OFFSET        0
