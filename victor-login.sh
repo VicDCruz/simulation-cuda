@@ -1,0 +1,1 @@
+ssh -i ~/Downloads/cuda-llaves/victor-ssh-key.pub victorcruz@35.201.250.232
