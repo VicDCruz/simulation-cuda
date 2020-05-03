@@ -107,6 +107,7 @@ int main() {
   area = 2.0 * 2.5 * 1.125 * (double)( NPOINTS * NPOINTS - numoutside) / (double)(NPOINTS * NPOINTS);
   error = area / (double)NPOINTS;
 
+  printf("Total numbers outside: %d\n", numoutside);
   printf("Area of Mandlebrot set = %12.8f +/- %12.8f\n",area,error);
 
   return 0;
